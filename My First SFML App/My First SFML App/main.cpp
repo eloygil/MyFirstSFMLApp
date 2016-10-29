@@ -41,10 +41,12 @@ void newGame(const float ball_init_x, sf::RectangleShape &bar_l, sf::RectangleSh
 int main(int, char const**)
 {
     const float ball_radius = 15.0f;
-    sf::Vector2f direction(random(), random());
+    //sf::Vector2f direction(random(), random());
     sf::Vector2f window_size(1280, 750);
     sf::Vector2i score(0, 0);
     float padding = 10.f;
+    static const std::string frases[] = {"Si no ganas esta partida te vamos a marginar","¿Quieres ver las fotos de los gintonics?","PRO1 a la cuarta me la saco seguro","Si no apruebo iré al soborno","Conozco a uno del LSI","Si no aprendes catalán te vamos a marginar","¿Pero quieres o no quieres ver las fotos de los gintonics?","Los gintonics, tiu."};
+    std::vector<std::string> frases_buenas(frases,frases+sizeof(frases)/sizeof(frases[0]));
     
     // Create the main window
     sf::RenderWindow window(sf::VideoMode((int)window_size.x, (int)window_size.y, 32), "Pong de Jongh - The Game");
@@ -72,7 +74,7 @@ int main(int, char const**)
     
     // Define the bars
     float m_ratio = 2.f;
-    const sf::Vector2f barSize(window_size.x/80.f, window_size.y/3.f);
+    const sf::Vector2f barSize(window_size.x/80.f, window_size.y/4.f);
     sf::RectangleShape bar_l, bar_r;
     
     bar_l.setFillColor(sf::Color::Yellow);
@@ -88,7 +90,7 @@ int main(int, char const**)
     newGame(window_size.x/2.0f, bar_l, bar_r, ball, window_size, padding);
     
     // Define velocity
-    sf::Vector2f velocity(250,250);
+    sf::Vector2f velocity(400,400);
     
     // Load a sprite to display
     sf::Texture texture;
@@ -103,7 +105,10 @@ int main(int, char const**)
         return EXIT_FAILURE;
     }
     sf::Text text("\n Pong de Jongh", font, 50);
+    std::string frase_random = frases_buenas[rand()%frases_buenas.size()];
+    sf::Text text_frases(frase_random, font, 20);
     text.setFillColor(sf::Color::Black);
+    text_frases.setFillColor(sf::Color::Black);
     sf::String score_str_l = std::to_string(score.x);
     int scoreFontSize = 70;
     int scoreNumDigits = 1;
@@ -119,12 +124,13 @@ int main(int, char const**)
 
     // Load a music to play
     sf::Music music;
-    if (!music.openFromFile(resourcePath() + "nice_music.ogg")) {
+    if (!music.openFromFile(resourcePath() + "main_theme.ogg")) {
         return EXIT_FAILURE;
     }
 
     // Play the music
     music.play();
+    music.setLoop(true);
 
     // Hacks.
     sf::Clock clock;
@@ -204,7 +210,7 @@ int main(int, char const**)
                 ball.setPosition(ball.getPosition().x, window_size.y - ball.getRadius());
         }
         
-        // Bar collitions
+        // Bar collisions
         if (ball.getPosition().x + ball.getRadius() >= window_size.x - (padding + barSize.x) && ball.getPosition().y >= bar_r.getPosition().y && ball.getPosition().y <= bar_r.getPosition().y + barSize.y) {
             velocity.x *= -1;
         } else if (ball.getPosition().x - ball.getRadius() <= padding + barSize.x && ball.getPosition().y >= bar_l.getPosition().y && ball.getPosition().y <= bar_l.getPosition().y + barSize.y) {
@@ -218,6 +224,7 @@ int main(int, char const**)
             sprite.setTexture(texture_l);
         }
         
+        
         // Clear screen
         window.clear();
 
@@ -226,6 +233,10 @@ int main(int, char const**)
         
         // Draw the ball
         window.draw(ball);
+        
+        text_frases.setPosition(ball.getPosition().x - (frase_random.length()/2 * padding) , ball.getPosition().y - 5 * padding);
+        if (std::abs(velocity.x) >= 400)
+            window.draw(text_frases);
         
         // Draw the bars
         window.draw(bar_l);
