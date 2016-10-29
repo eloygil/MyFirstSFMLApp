@@ -43,7 +43,7 @@ int main(int, char const**)
     const float ball_radius = 15.0f;
     sf::Vector2f direction(random(), random());
     sf::Vector2f window_size(1280, 750);
-    sf::Vector2i score(0, 99);
+    sf::Vector2i score(0, 0);
     float padding = 10.f;
     
     // Create the main window
@@ -71,7 +71,7 @@ int main(int, char const**)
     ball.setOutlineColor(sf::Color::Black);
     
     // Define the bars
-    float m_ratio = 25.f;
+    float m_ratio = 2.f;
     const sf::Vector2f barSize(window_size.x/80.f, window_size.y/3.f);
     sf::RectangleShape bar_l, bar_r;
     
@@ -128,6 +128,7 @@ int main(int, char const**)
 
     // Hacks.
     sf::Clock clock;
+    sf::Time ttl = sf::seconds(2);
     
     // Start the game loop
     while (window.isOpen())
@@ -142,32 +143,39 @@ int main(int, char const**)
                 window.close();
             }
             
-            // Right bar UP (arrow up)
-            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Up) {
-                bar_r.setPosition(bar_r.getPosition().x, std::max(bar_r.getPosition().y - m_ratio, padding));
-            }
-            
-            // Right bar DOWN (arrow down)
-            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Down) {
-                bar_r.setPosition(bar_r.getPosition().x, std::min(bar_r.getPosition().y + m_ratio, window_size.y - (padding + bar_r.getSize().y)));
-            }
-            
-            // Left bar UP (W key)
-            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::W) {
-                bar_l.setPosition(bar_l.getPosition().x, std::max(bar_l.getPosition().y - m_ratio, padding));
-            }
-            
-            // Left bar DOWN (S key)
-            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::S) {
-                bar_l.setPosition(bar_l.getPosition().x, std::min(bar_l.getPosition().y + m_ratio, window_size.y - (padding + bar_r.getSize().y)));
-            }
-
             // Escape pressed: exit
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
                 window.close();
             }
         }
 
+        // Right bar UP (arrow up)
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
+            bar_r.setPosition(bar_r.getPosition().x, std::max(bar_r.getPosition().y - m_ratio, padding));
+        }
+        
+        // Right bar DOWN (arrow down)
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
+            bar_r.setPosition(bar_r.getPosition().x, std::min(bar_r.getPosition().y + m_ratio, window_size.y - (padding + bar_r.getSize().y)));
+        }
+        
+        // Left bar UP (W key)
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
+            bar_l.setPosition(bar_l.getPosition().x, std::max(bar_l.getPosition().y - m_ratio, padding));
+        }
+        
+        // Left bar DOWN (S key)
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
+            bar_l.setPosition(bar_l.getPosition().x, std::min(bar_l.getPosition().y + m_ratio, window_size.y - (padding + bar_r.getSize().y)));
+        }
+        
+        // Increasing ball speed
+        ttl -= sf::seconds(deltaTime);
+        if (ttl < sf::Time::Zero) {
+            ttl = sf::seconds(2);
+            velocity *= 1.01f;
+        }
+        
         // Save previous ball position
         sf::Vector2f prev_position = ball.getPosition();
         
