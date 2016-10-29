@@ -13,6 +13,8 @@
 		519C7A721DC4166900DBBF9D /* nice_music.ogg in Resources */ = {isa = PBXBuildFile; fileRef = 519C7A711DC4166900DBBF9D /* nice_music.ogg */; };
 		519C7A741DC4166900DBBF9D /* sansation.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 519C7A731DC4166900DBBF9D /* sansation.ttf */; };
 		519C7A761DC4166900DBBF9D /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 519C7A751DC4166900DBBF9D /* icon.png */; };
+		519C7A7E1DC4450C00DBBF9D /* bg_l.png in Resources */ = {isa = PBXBuildFile; fileRef = 519C7A7C1DC4450C00DBBF9D /* bg_l.png */; };
+		519C7A7F1DC4450C00DBBF9D /* bg_r.png in Resources */ = {isa = PBXBuildFile; fileRef = 519C7A7D1DC4450C00DBBF9D /* bg_r.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -25,6 +27,8 @@
 		519C7A711DC4166900DBBF9D /* nice_music.ogg */ = {isa = PBXFileReference; lastKnownFileType = file; path = nice_music.ogg; sourceTree = "<group>"; };
 		519C7A731DC4166900DBBF9D /* sansation.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = sansation.ttf; sourceTree = "<group>"; };
 		519C7A751DC4166900DBBF9D /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.png; sourceTree = "<group>"; };
+		519C7A7C1DC4450C00DBBF9D /* bg_l.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bg_l.png; sourceTree = "<group>"; };
+		519C7A7D1DC4450C00DBBF9D /* bg_r.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bg_r.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,6 +81,8 @@
 		519C7A6E1DC4166900DBBF9D /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				519C7A7C1DC4450C00DBBF9D /* bg_l.png */,
+				519C7A7D1DC4450C00DBBF9D /* bg_r.png */,
 				519C7A6F1DC4166900DBBF9D /* cute_image.jpg */,
 				519C7A711DC4166900DBBF9D /* nice_music.ogg */,
 				519C7A731DC4166900DBBF9D /* sansation.ttf */,
@@ -144,9 +150,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				519C7A761DC4166900DBBF9D /* icon.png in Resources */,
+				519C7A7E1DC4450C00DBBF9D /* bg_l.png in Resources */,
 				519C7A741DC4166900DBBF9D /* sansation.ttf in Resources */,
 				519C7A721DC4166900DBBF9D /* nice_music.ogg in Resources */,
 				519C7A701DC4166900DBBF9D /* cute_image.jpg in Resources */,
+				519C7A7F1DC4450C00DBBF9D /* bg_r.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

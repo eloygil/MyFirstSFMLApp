@@ -16,14 +16,19 @@
 
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
+#include <random>
 
 // Here is a small helper for you! Have a look.
 #include "ResourcePath.hpp"
 
 int main(int, char const**)
 {
+    const float ball_radius = 15.0f;
+    sf::Vector2f direction(random(), random());
+    sf::Vector2i window_size(1280, 750);
+    
     // Create the main window
-    sf::RenderWindow window(sf::VideoMode(800, 600), "SFML window");
+    sf::RenderWindow window(sf::VideoMode(window_size.x, window_size.y, 32), "Pong de Jongh - The Game");
 
     // Set the Icon
     sf::Image icon;
@@ -34,7 +39,7 @@ int main(int, char const**)
 
     // Load a sprite to display
     sf::Texture texture;
-    if (!texture.loadFromFile(resourcePath() + "cute_image.jpg")) {
+    if (!texture.loadFromFile(resourcePath() + "bg_r.png")) {
         return EXIT_FAILURE;
     }
     sf::Sprite sprite(texture);
@@ -44,7 +49,7 @@ int main(int, char const**)
     if (!font.loadFromFile(resourcePath() + "sansation.ttf")) {
         return EXIT_FAILURE;
     }
-    sf::Text text("Welcome to my game", font, 50);
+    sf::Text text("\n Pong de Jongh", font, 50);
     text.setFillColor(sf::Color::Black);
 
     // Load a music to play
@@ -66,6 +71,16 @@ int main(int, char const**)
             // Close window: exit
             if (event.type == sf::Event::Closed) {
                 window.close();
+            }
+            
+            // Change background: left
+            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Left) {
+                texture.loadFromFile(resourcePath() + "bg_l.png");
+            }
+            
+            // Change background: right
+            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Right) {
+                texture.loadFromFile(resourcePath() + "bg_r.png");
             }
 
             // Escape pressed: exit
