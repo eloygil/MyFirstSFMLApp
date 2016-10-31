@@ -19,6 +19,7 @@
 #include <random>
 #include <string>
 #include <iostream>
+#include <time.h>
 
 // Here is a small helper for you! Have a look.
 #include "ResourcePath.hpp"
@@ -40,12 +41,13 @@ void newGame(const float ball_init_x, sf::RectangleShape &bar_l, sf::RectangleSh
 
 int main(int, char const**)
 {
+    srand(time(NULL));
     const float ball_radius = 15.0f;
     //sf::Vector2f direction(random(), random());
     sf::Vector2f window_size(1280, 750);
     sf::Vector2i score(0, 0);
     float padding = 10.f;
-    static const std::string frases[] = {"Si no ganas esta partida te vamos a marginar","¿Quieres ver las fotos de los gintonics?","PRO1 a la cuarta me la saco seguro","Si no apruebo iré al soborno","Conozco a uno del LSI","Si no aprendes catalán te vamos a marginar","¿Pero quieres o no quieres ver las fotos de los gintonics?","Los gintonics, tiu."};
+    static const std::string frases[] = {"Si no ganas esta partida te vamos a marginar","¿Quieres ver las fotos de los gintonics?","PRO1 a la cuarta me la saco seguro","Si no apruebo ire al soborno","Conozco a uno del LSI","Si no aprendes catalan te vamos a marginar","¿Pero quieres o no quieres ver las fotos \nde los gintonics?","Los gintonics, tiu."};
     std::vector<std::string> frases_buenas(frases,frases+sizeof(frases)/sizeof(frases[0]));
     
     // Create the main window
@@ -106,7 +108,7 @@ int main(int, char const**)
     }
     sf::Text text("\n Pong de Jongh", font, 50);
     std::string frase_random = frases_buenas[rand()%frases_buenas.size()];
-    sf::Text text_frases(frase_random, font, 20);
+    sf::Text text_frases(frase_random, font, 25);
     text.setFillColor(sf::Color::Black);
     text_frases.setFillColor(sf::Color::Black);
     sf::String score_str_l = std::to_string(score.x);
@@ -177,7 +179,7 @@ int main(int, char const**)
         
         // Increasing ball speed
         ttl -= sf::seconds(deltaTime);
-        if (ttl < sf::Time::Zero) {
+        if (ttl < sf::Time::Zero && velocity.x < 800) {
             ttl = sf::seconds(2);
             velocity *= 1.01f;
         }
@@ -211,9 +213,10 @@ int main(int, char const**)
         }
         
         // Bar collisions
-        if (ball.getPosition().x + ball.getRadius() >= window_size.x - (padding + barSize.x) && ball.getPosition().y >= bar_r.getPosition().y && ball.getPosition().y <= bar_r.getPosition().y + barSize.y) {
+        if (ball.getPosition().x + ball.getRadius() > window_size.x - (padding + barSize.x) && ball.getPosition().y >= bar_r.getPosition().y && ball.getPosition().y <= bar_r.getPosition().y + barSize.y) {
             velocity.x *= -1;
-        } else if (ball.getPosition().x - ball.getRadius() <= padding + barSize.x && ball.getPosition().y >= bar_l.getPosition().y && ball.getPosition().y <= bar_l.getPosition().y + barSize.y) {
+            
+        } else if (ball.getPosition().x - ball.getRadius() < padding + barSize.x && ball.getPosition().y >= bar_l.getPosition().y && ball.getPosition().y <= bar_l.getPosition().y + barSize.y) {
             velocity.x *= -1;
         }
         
@@ -231,12 +234,17 @@ int main(int, char const**)
         // Draw the sprite
         window.draw(sprite);
         
+        text_frases.setPosition(window_size.x/2 + 0.1 * window_size.x, window_size.y/6);
+        if (std::abs(velocity.x) >= 400) {
+            if (not (rand() % 6000)) {
+                frase_random = frases_buenas[rand()%frases_buenas.size()];
+                text_frases.setString(frase_random);
+            }
+            window.draw(text_frases);
+        }
+        
         // Draw the ball
         window.draw(ball);
-        
-        text_frases.setPosition(ball.getPosition().x - (frase_random.length()/2 * padding) , ball.getPosition().y - 5 * padding);
-        if (std::abs(velocity.x) >= 400)
-            window.draw(text_frases);
         
         // Draw the bars
         window.draw(bar_l);
