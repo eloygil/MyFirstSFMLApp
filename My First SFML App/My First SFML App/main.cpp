@@ -22,7 +22,11 @@
 #include <time.h>
 
 // Here is a small helper for you! Have a look.
+#ifdef __linux__
+#define resourcePath() std::string()
+#else
 #include "ResourcePath.hpp"
+#endif
 
 int scoreDigits(int score_r) {
     int i = 0;
@@ -49,7 +53,7 @@ int main(int, char const**)
     float padding = 10.f;
     static const std::string frases[] = {"Si no ganas esta partida te vamos a marginar","¿Quieres ver las fotos de los gintonics?","PRO1 a la cuarta me la saco seguro","Si no apruebo ire al soborno","Conozco a uno del LSI","Si no aprendes catalan te vamos a marginar","¿Pero quieres o no quieres ver las fotos \nde los gintonics?","Los gintonics, tiu."};
     std::vector<std::string> frases_buenas(frases,frases+sizeof(frases)/sizeof(frases[0]));
-    
+
     // Create the main window
     sf::RenderWindow window(sf::VideoMode((int)window_size.x, (int)window_size.y, 32), "Pong de Jongh - The Game");
 
@@ -59,12 +63,12 @@ int main(int, char const**)
         return EXIT_FAILURE;
     }
     window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
-    
+
     // Load textures
     sf::Texture texture_l, texture_r, texture_bar;
     texture_l.loadFromFile(resourcePath() + "bg_l.png");
     texture_r.loadFromFile(resourcePath() + "bg_r.png");
-    
+
     // Define the ball
     sf::CircleShape ball;
     ball.setPosition(window_size.x/2, window_size.y/2);
@@ -73,27 +77,27 @@ int main(int, char const**)
     ball.setFillColor(sf::Color::Yellow);
     ball.setOutlineThickness(2);
     ball.setOutlineColor(sf::Color::Black);
-    
+
     // Define the bars
     float m_ratio = 2.f;
     const sf::Vector2f barSize(window_size.x/80.f, window_size.y/4.f);
     sf::RectangleShape bar_l, bar_r;
-    
+
     bar_l.setFillColor(sf::Color::Yellow);
     bar_l.setOutlineThickness(2);
     bar_l.setOutlineColor(sf::Color::Black);
     bar_r.setFillColor(sf::Color::Yellow);
     bar_r.setOutlineThickness(2);
     bar_r.setOutlineColor(sf::Color::Black);
-    
+
     bar_l.setSize(barSize);
     bar_r.setSize(barSize);
-    
+
     newGame(window_size.x/2.0f, bar_l, bar_r, ball, window_size, padding);
-    
+
     // Define velocity
     sf::Vector2f velocity(400,400);
-    
+
     // Load a sprite to display
     sf::Texture texture;
     if (!texture.loadFromFile(resourcePath() + "bg_r.png")) {
@@ -137,7 +141,7 @@ int main(int, char const**)
     // Hacks.
     sf::Clock clock;
     sf::Time ttl = sf::seconds(2);
-    
+
     // Start the game loop
     while (window.isOpen())
     {
@@ -150,7 +154,7 @@ int main(int, char const**)
             if (event.type == sf::Event::Closed) {
                 window.close();
             }
-            
+
             // Escape pressed: exit
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
                 window.close();
@@ -161,32 +165,32 @@ int main(int, char const**)
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
             bar_r.setPosition(bar_r.getPosition().x, std::max(bar_r.getPosition().y - m_ratio, padding));
         }
-        
+
         // Right bar DOWN (arrow down)
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
             bar_r.setPosition(bar_r.getPosition().x, std::min(bar_r.getPosition().y + m_ratio, window_size.y - (padding + bar_r.getSize().y)));
         }
-        
+
         // Left bar UP (W key)
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
             bar_l.setPosition(bar_l.getPosition().x, std::max(bar_l.getPosition().y - m_ratio, padding));
         }
-        
+
         // Left bar DOWN (S key)
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
             bar_l.setPosition(bar_l.getPosition().x, std::min(bar_l.getPosition().y + m_ratio, window_size.y - (padding + bar_r.getSize().y)));
         }
-        
+
         // Increasing ball speed
         ttl -= sf::seconds(deltaTime);
         if (ttl < sf::Time::Zero && velocity.x < 800) {
             ttl = sf::seconds(2);
             velocity *= 1.01f;
         }
-        
+
         // Save previous ball position
         sf::Vector2f prev_position = ball.getPosition();
-        
+
         // Ball bounce
         ball.setPosition(ball.getPosition() + velocity * deltaTime);
         if (ball.getPosition().x + ball.getRadius() >= window_size.x) {
@@ -202,7 +206,7 @@ int main(int, char const**)
             score_r.setPosition(window_size.x - (padding + scoreNumDigits * scoreFontSize * 0.8), score_r.getPosition().y);
             newGame(window_size.x - (2 * ball.getRadius() + padding), bar_l, bar_r, ball, window_size, padding);
         }
-        
+
         if (ball.getPosition().y + ball.getRadius() >= window_size.y || ball.getPosition().y - ball.getRadius() <= 0) {
             velocity.y *= -1;
             // Reset vertical position just to ensure the ball keeps inside the screen
@@ -211,29 +215,29 @@ int main(int, char const**)
             else
                 ball.setPosition(ball.getPosition().x, window_size.y - ball.getRadius());
         }
-        
+
         // Bar collisions
         if (ball.getPosition().x + ball.getRadius() > window_size.x - (padding + barSize.x) && ball.getPosition().y >= bar_r.getPosition().y && ball.getPosition().y <= bar_r.getPosition().y + barSize.y) {
             velocity.x *= -1;
-            
+
         } else if (ball.getPosition().x - ball.getRadius() < padding + barSize.x && ball.getPosition().y >= bar_l.getPosition().y && ball.getPosition().y <= bar_l.getPosition().y + barSize.y) {
             velocity.x *= -1;
         }
-        
+
         // Background depending on the ball's position
         if (prev_position.x <= window_size.x/2 && ball.getPosition().x >= window_size.x/2) {
             sprite.setTexture(texture_r);
         } else if (prev_position.x >= window_size.x/2 && ball.getPosition().x <= window_size.x/2) {
             sprite.setTexture(texture_l);
         }
-        
-        
+
+
         // Clear screen
         window.clear();
 
         // Draw the sprite
         window.draw(sprite);
-        
+
         text_frases.setPosition(window_size.x/2 + 0.1 * window_size.x, window_size.y/6);
         if (std::abs(velocity.x) >= 400) {
             if (not (rand() % 6000)) {
@@ -242,10 +246,10 @@ int main(int, char const**)
             }
             window.draw(text_frases);
         }
-        
+
         // Draw the ball
         window.draw(ball);
-        
+
         // Draw the bars
         window.draw(bar_l);
         window.draw(bar_r);
